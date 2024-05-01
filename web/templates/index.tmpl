@@ -7,26 +7,31 @@
 <script type="text/javascript" src="/static/js/jquery-3.4.1.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
 
-<h2 align=center>
-    Play Stream {{ .suuid }}
-</h2>
-<div class="container">
-  <div class="row">
-    <div class="col-3">
-      <div class="list-group">
-  {{ range .suuidMap }}
-    <a href="/player/{{ . }}" id="{{ . }}" name="{{ . }}" class="list-group-item list-group-item-action">{{ . }}</a>
-  {{ end }}
-</div>
-    </div>
-        <div class="col">
-            <input type="hidden" name="suuid" id="suuid" value="{{ .suuid }}">
-            <input type="hidden" name="port" id="port" value="{{ .port }}">
-            <video id="livestream" style="width:600px;" controls autoplay muted></video>
-        </div>
-    </div>
+<div>
+    <input type="hidden" name="suuid" id="suuid" value="{{ .suuid }}">
+    <input type="hidden" name="port" id="port" value="{{ .port }}">
+    <video id="livestream" style="background-color: black; width: 100vw; height: 100%; position: fixed; margin: auto; top: 50%; left: 50%; transform: translate(-50%, -50%);" controls autoplay muted></video>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script type="text/javascript" src="/static/js/app.js?ver={{ .version }}"></script>
+<script>
+video = document.getElementById('livestream');
+iframe = document.createElement("iframe");
+iframe.height='100%';
+iframe.width='100%';
+iframe.src = 'https://http.cat/503';
+video.addEventListener('loadstart',function() {
+$.ajax({
+   url: 'https://cats.schizo.eu/play/hls/H264_AAC/index.m3u8',
+   error: function (xhr, ajaxOptions, thrownError) {
+      if (thrownError === 'timeout') {
+         document.body.replaceWith(iframe);
+      }
+   },
+   timeout: 1000 //in milliseconds
+});
+})
+video.addEventListener('stalled',function() {alert('loading has stalled');})
+video.addEventListener('waiting',function() {alert('loading is waiting');})
 </script>
 </html>
